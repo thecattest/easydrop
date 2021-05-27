@@ -1,3 +1,16 @@
 body {
   font-family: 'Montserrat', sans-sans-serif;
 }
+
+body, html {
+    height: 100%;
+    margin: 0;
+}
+
+.my-container {
+    max-width: 400px;
+}
+
+.form-control, .btn {
+    border-radius: 0;
+}
