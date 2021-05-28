@@ -63,7 +63,8 @@ def logout_handler():
 @app.route("/")
 @login_required
 def index():
-    return send_html("index.html")
+    # return send_html("index.html")
+    return render_template("index.html")
 
 
 @app.route("/upload", methods=["POST"])

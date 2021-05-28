@@ -1,5 +1,6 @@
 body {
-  font-family: 'Montserrat', sans-sans-serif;
+  /*font-family: 'Montserrat', sans-sans-serif;*/
+  font-family: 'Inconsolata', monospace;
 }
 
 body, html {
@@ -14,3 +15,18 @@ body, html {
 .form-control, .btn {
     border-radius: 0;
 }
+
+.form-control {
+    border: 1px solid #343a40;
+}
+
+.form-control:focus {
+    border: 2px solid black;
+    outline: none!important;
+    box-shadow: none;
+}
+
+/* .btn:focus, .btn-outline-dark:not(:disabled):not(.disabled):active:focus {
+    outline: none;
+    box-shadow: none;
+} */
