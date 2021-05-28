@@ -113,8 +113,11 @@ def account_password(update, context):
 
 
 def change_password(update, context):
-    db = db_session.create_session()
     user_password = update.message.text
+    if not all([letter in ascii_lowercase for letter in user_password]):
+        update.message.reply_text(ACCOUNT_LOGIN_CHANGE_WRONG_CHARACTERS)
+        return ST_ACCOUNT_PASSWORD
+    db = db_session.create_session()
     tg_user, db_user = get_user(update, db)
     db_user.set_password(user_password)
     db.commit()
