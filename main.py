@@ -60,11 +60,12 @@ def index():
 
 
 @app.route("/upload", methods=["POST"])
+@login_required
 def upload():
     if request.method == "POST":
         file = request.files['file']
         try:
-            bot.send_document(CHAT_ID, file, filename=file.filename)
+            bot.send_document(current_user.id, file, filename=file.filename)
         except NetworkError as e:
             bot.send_message(CHAT_ID, str(e))
             path = 'files/' + file.filename

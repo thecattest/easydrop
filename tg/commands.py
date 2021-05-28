@@ -1,9 +1,10 @@
 CMD_START = 'start'
-CMD_HELP = 'help'
-CMD_REG = 'register'
-CMD_ACCOUNT = 'account'
-CMD_CHANGE_LOGIN = 'change login'
-CMD_CHANGE_PASSWORD = 'change password'
+CMD_HELP = 'помощь'
+CMD_REG = 'регистрация'
+CMD_ACCOUNT = 'аккаунт'
+CMD_CHANGE_LOGIN = 'изменить логин'
+CMD_CHANGE_PASSWORD = 'изменить пароль'
+CMD_BACK = "назад"
 
 ST_REG, ST_PASSWORD, \
     ST_MAIN, ST_ACCOUNT, \

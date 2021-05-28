@@ -4,6 +4,8 @@ from telegram.ext import CommandHandler, ConversationHandler
 from telegram import Bot
 from telegram.error import NetworkError
 
+from string import ascii_lowercase
+
 from tg.commands import *
 from tg.strings import *
 from tg.keyboards import *
@@ -52,7 +54,7 @@ def reg(update, context):
     db.add(user)
     db.commit()
     db.close()
-    update.message.reply_text(REG_START, reply_markup=KB_REG)
+    update.message.reply_text(REG_START, reply_markup=KB_EMPTY)
     return ST_PASSWORD
 
 
@@ -74,7 +76,7 @@ def account(update, context):
 
 
 def account_login(update, context):
-    update.message.reply_text(ACCOUNT_LOGIN_CHANGE)
+    update.message.reply_text(ACCOUNT_LOGIN_CHANGE, reply_markup=KB_EMPTY)
     return ST_ACCOUNT_LOGIN
 
 
@@ -82,6 +84,18 @@ def change_login(update, context):
     db = db_session.create_session()
     user_login = update.message.text
     tg_user, db_user = get_user(update, db)
+    if len(user_login) > 100:
+        update.message.reply_text()
+        return ST_ACCOUNT_LOGIN
+    if not all([letter in ascii_lowercase for letter in user_login]):
+        update.message.reply_text(ACCOUNT_LOGIN_CHANGE_WRONG_CHARACTERS)
+        return ST_ACCOUNT_LOGIN
+    if db_user.login == user_login:
+        update.message.reply_text(ACCOUNT_LOGIN_CHANGE_LOGIN_SAME)
+        return ST_ACCOUNT_LOGIN
+    if db.query(User).filter(User.login == user_login).first():
+        update.message.reply_text(ACCOUNT_LOGIN_CHANGE_LOGIN_TAKEN)
+        return ST_ACCOUNT_LOGIN
     db_user.login = user_login
     db.commit()
     db.close()
@@ -90,7 +104,7 @@ def change_login(update, context):
 
 
 def account_password(update, context):
-    update.message.reply_text(ACCOUNT_PASSWORD_CHANGE)
+    update.message.reply_text(ACCOUNT_PASSWORD_CHANGE, reply_markup=KB_EMPTY)
     return ST_ACCOUNT_PASSWORD
 
 
@@ -102,6 +116,11 @@ def change_password(update, context):
     db.commit()
     db.close()
     update.message.reply_text(ACCOUNT_PASSWORD_CHANGE_SUCCESS, reply_markup=KB_MAIN)
+    return ST_MAIN
+
+
+def back(update, context):
+    update.message.reply_text(CMD_BACK, reply_markup=KB_MAIN)
     return ST_MAIN
 
 
@@ -123,7 +142,8 @@ conversation_handler = ConversationHandler(
         ],
         ST_ACCOUNT: [
             MessageHandler(Filters.text(CMD_CHANGE_LOGIN), account_login),
-            MessageHandler(Filters.text(CMD_CHANGE_PASSWORD), account_password)
+            MessageHandler(Filters.text(CMD_CHANGE_PASSWORD), account_password),
+            MessageHandler(Filters.text(CMD_BACK), back)
         ],
         ST_ACCOUNT_LOGIN: [
             MessageHandler(Filters.regex('.+'), change_login)
