@@ -34,6 +34,7 @@ def start(update, context):
         return ST_MAIN
     else:
         update.message.reply_text(HELLO, reply_markup=KB_START)
+        help(update, context)
     return ST_REG
 
 
