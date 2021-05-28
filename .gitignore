@@ -3,3 +3,4 @@
 /venv/
 /nohup.out
 /tg/tg_token.py
+/data/db_config

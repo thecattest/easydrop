@@ -11,6 +11,7 @@ class User(SqlAlchemyBase, UserMixin):
     __tablename__ = 'users'
 
     id = sqlalchemy.Column(sqlalchemy.String(100), primary_key=True, unique=True)
+    login = sqlalchemy.Column(sqlalchemy.String(100), unique=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String(95), nullable=True)
 
     files = orm.relation("File", back_populates="user")
@@ -22,4 +23,4 @@ class User(SqlAlchemyBase, UserMixin):
         return check_password_hash(self.hashed_password, password)
 
     def __repr__(self):
-        return f"<User {self.id}>"
+        return f"<User {self.id} {self.login}>"

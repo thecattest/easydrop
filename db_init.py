@@ -5,22 +5,22 @@ from data.__all_models import *
 from data.db_types import MYSQL, SQLITE
 
 
-# TYPE = MYSQL
-TYPE = SQLITE
+TYPE = MYSQL
+# TYPE = SQLITE
 
 
 def connect(type):
     def mysql():
         pass
-        # db_path = ""
-        # try:
-        #     with open("db_config") as f:
-        #         username, password = f.readline().split()
-        # except FileNotFoundError:
-        #     raise FileNotFoundError("Create file with name db_config in root with username and password to "
-        #                             "database separated with space")
-        # else:
-        #     db_session.global_init(db_path, TYPE, username, password)
+        db_path = "easydrop"
+        try:
+            with open("data/db_config") as f:
+                username, password = f.readline().split()
+        except FileNotFoundError:
+            raise FileNotFoundError("Create file with name db_config in root with username and password to "
+                                    "database separated with space")
+        else:
+            db_session.global_init(db_path, TYPE, username, password)
 
     def sqlite():
         db_dir = "db"

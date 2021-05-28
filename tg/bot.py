@@ -1,12 +1,12 @@
 import telegram
 from telegram.ext import Updater, MessageHandler, Filters
 from telegram.ext import CommandHandler, ConversationHandler
-from telegram import Bot, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram import Bot
 from telegram.error import NetworkError
 
-from tg.commands import CMD_START, CMD_HELP, CMD_REG, CMD_ACCOUNT
-from tg.commands import ST_REG, ST_LOGIN, ST_PASSWORD, ST_MAIN, ST_ACCOUNT
-from tg.strings import HELLO, HELP, DEFAULT, LOGIN, PASSWORD, MAIN, ACCOUNT
+from tg.commands import *
+from tg.strings import *
+from tg.keyboards import *
 
 
 try:
@@ -16,9 +16,7 @@ except ImportError:
 
 
 def start(update, context):
-    reply_keyboard = [[CMD_REG, CMD_HELP]]
-    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=False, resize_keyboard=True)
-    update.message.reply_text(HELLO, reply_markup=markup)
+    update.message.reply_text(HELLO, reply_markup=KB_START)
     return ST_REG
 
 
@@ -31,7 +29,7 @@ def default(update, context):
 
 
 def reg(update, context):
-    update.message.reply_text(LOGIN, reply_markup=ReplyKeyboardRemove())
+    update.message.reply_text(LOGIN, reply_markup=KB_REG)
     return ST_LOGIN
 
 
@@ -45,10 +43,7 @@ def login(update, context):
 def password(update, context):
     user_password = update.message.text
     update.message.reply_text("твой пароль: " + user_password)
-
-    reply_keyboard = [[CMD_ACCOUNT, CMD_HELP]]
-    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=False, resize_keyboard=True)
-    update.message.reply_text(MAIN, reply_markup=markup)
+    update.message.reply_text(MAIN, reply_markup=KB_PASSWORD)
     return ST_MAIN
 
 

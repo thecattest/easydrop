@@ -29,7 +29,7 @@ def login_handler():
         form_login = form_data["login"].strip()
         form_password = form_data["password"].strip()
         db = db_session.create_session()
-        form_user = db.query(User).filter(User.id == form_login).first()
+        form_user = db.query(User).filter(User.login == form_login).first()
         db.close()
         if form_user:
             if form_user.check_password(form_password):
