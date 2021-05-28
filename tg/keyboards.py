@@ -8,8 +8,13 @@ KB_START = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 KB_REG = ReplyKeyboardRemove()
-KB_PASSWORD = ReplyKeyboardMarkup(
+KB_MAIN = ReplyKeyboardMarkup(
     [[CMD_ACCOUNT, CMD_HELP]],
+    one_time_keyboard=False,
+    resize_keyboard=True
+)
+KB_ACCOUNT = ReplyKeyboardMarkup(
+    [[CMD_CHANGE_LOGIN, CMD_CHANGE_PASSWORD]],
     one_time_keyboard=False,
     resize_keyboard=True
 )
