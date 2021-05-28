@@ -82,5 +82,6 @@ conversation_handler = ConversationHandler(
 dp.add_handler(conversation_handler)
 bot = updater.bot
 
-updater.start_polling()
-updater.idle()
+if __name__ == '__main__':
+    updater.start_polling()
+    updater.idle()
