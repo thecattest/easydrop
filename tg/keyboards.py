@@ -15,7 +15,13 @@ KB_MAIN = ReplyKeyboardMarkup(
 )
 KB_ACCOUNT = ReplyKeyboardMarkup(
     [[CMD_CHANGE_LOGIN, CMD_CHANGE_PASSWORD],
+     [CMD_DELETE_ACCOUNT],
      [CMD_BACK]],
+    one_time_keyboard=False,
+    resize_keyboard=True
+)
+KB_ACCOUNT_DELETE = ReplyKeyboardMarkup(
+    [[CMD_YES, CMD_NO]],
     one_time_keyboard=False,
     resize_keyboard=True
 )

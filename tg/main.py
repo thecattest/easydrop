@@ -61,6 +61,9 @@ def reg(update, context):
 
 def password(update, context):
     user_password = update.message.text
+    if not all([letter in ascii_lowercase for letter in user_password]):
+        update.message.reply_text(ACCOUNT_LOGIN_CHANGE_WRONG_CHARACTERS)
+        return ST_PASSWORD
     db = db_session.create_session()
     tg_user, db_user = get_user(update, db)
     db_user.set_password(user_password)
@@ -120,6 +123,21 @@ def change_password(update, context):
     return ST_MAIN
 
 
+def account_delete(update, context):
+    update.message.reply_text(ACCOUNT_DELETE, reply_markup=KB_ACCOUNT_DELETE)
+    return ST_ACCOUNT_DELETE
+
+
+def delete(update, context):
+    db = db_session.create_session()
+    _, db_user = get_user(update, db)
+    db.delete(db_user)
+    db.commit()
+    db.close()
+    update.message.reply_text("отныне я не знаю тебя...", reply_markup=KB_EMPTY)
+    return ConversationHandler.END
+
+
 def back(update, context):
     update.message.reply_text(CMD_BACK, reply_markup=KB_MAIN)
     return ST_MAIN
@@ -144,6 +162,7 @@ conversation_handler = ConversationHandler(
         ST_ACCOUNT: [
             MessageHandler(Filters.text(CMD_CHANGE_LOGIN), account_login),
             MessageHandler(Filters.text(CMD_CHANGE_PASSWORD), account_password),
+            MessageHandler(Filters.text(CMD_DELETE_ACCOUNT), account_delete),
             MessageHandler(Filters.text(CMD_BACK), back)
         ],
         ST_ACCOUNT_LOGIN: [
@@ -151,6 +170,10 @@ conversation_handler = ConversationHandler(
         ],
         ST_ACCOUNT_PASSWORD: [
             MessageHandler(Filters.regex('.+'), change_password)
+        ],
+        ST_ACCOUNT_DELETE: [
+            MessageHandler(Filters.text(CMD_YES), delete),
+            MessageHandler(Filters.text(CMD_NO), back),
         ]
 
     },

@@ -18,3 +18,4 @@ ACCOUNT_LOGIN_CHANGE_LOGIN_TAKEN = "логин занят, придумай др
 ACCOUNT_LOGIN_CHANGE_WRONG_CHARACTERS = "используй только английские буквы"
 ACCOUNT_LOGIN_CHANGE_LOGIN_TOO_LONG = "не больше 100 символов, давай снова"
 ACCOUNT_LOGIN_CHANGE_LOGIN_SAME = "это и так твой логин"
+ACCOUNT_DELETE = "удалить аккаунт?"
