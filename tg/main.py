@@ -12,11 +12,11 @@ from tg.keyboards import *
 
 from db_init import *
 
-
 try:
-    from tg.tg_token import TOKEN, CHAT_ID
-except ImportError:
-    raise ImportError('Telegram config file not found')
+    with open("tg/tg_config") as f:
+        TOKEN = f.readline()
+except FileNotFoundError:
+    raise FileNotFoundError("Telegram config file not found")
 
 
 def get_user(update, db):
@@ -92,8 +92,8 @@ def change_login(update, context):
         update.message.reply_text(ACCOUNT_LOGIN_CHANGE_WRONG_CHARACTERS)
         return ST_ACCOUNT_LOGIN
     if db_user.login == user_login:
-        update.message.reply_text(ACCOUNT_LOGIN_CHANGE_LOGIN_SAME)
-        return ST_ACCOUNT_LOGIN
+        update.message.reply_text(ACCOUNT_LOGIN_CHANGE_LOGIN_SAME, reply_markup=KB_ACCOUNT)
+        return ST_ACCOUNT
     if db.query(User).filter(User.login == user_login).first():
         update.message.reply_text(ACCOUNT_LOGIN_CHANGE_LOGIN_TAKEN)
         return ST_ACCOUNT_LOGIN
@@ -159,7 +159,3 @@ conversation_handler = ConversationHandler(
 )
 dp.add_handler(conversation_handler)
 bot = updater.bot
-
-if __name__ == '__main__':
-    updater.start_polling()
-    updater.idle()

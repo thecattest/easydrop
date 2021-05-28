@@ -2,7 +2,7 @@ from flask import Flask, request, make_response, jsonify, Response, render_templ
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from db_init import *
 import os
-from tg import updater, bot, NetworkError, CHAT_ID
+from tg import updater, bot, NetworkError
 
 
 app = Flask(__name__)
