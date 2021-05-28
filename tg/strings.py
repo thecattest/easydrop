@@ -1,0 +1,7 @@
+HELLO = "привет."
+HELP = "there is no help yet"
+DEFAULT = "используй команды"
+LOGIN = "отлично, регистрация\n\nпридумай логин:"
+PASSWORD = "придумай пароль:"
+MAIN = "регистрация пройдена"
+ACCOUNT = "there is no account settings yet"

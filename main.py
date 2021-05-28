@@ -2,19 +2,11 @@ from flask import Flask, request, make_response, jsonify, Response, render_templ
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from db_init import *
 import os
-import telegram
-
-try:
-    from tg import TOKEN, CHAT_ID
-except ImportError:
-    print('Telegram config file not found')
-    TOKEN = ''
-    CHAT_ID = ''
+from tg import bot, NetworkError, CHAT_ID
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'easydropsecretkthatyouwillneverguessbutcaneasilyfindongithub'
-bot = telegram.Bot(TOKEN)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -73,7 +65,7 @@ def upload():
         file = request.files['file']
         try:
             bot.send_document(CHAT_ID, file, filename=file.filename)
-        except telegram.error.NetworkError as e:
+        except NetworkError as e:
             bot.send_message(CHAT_ID, str(e))
             path = 'files/' + file.filename
             if not os.path.exists("files"):

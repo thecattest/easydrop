@@ -1,5 +1,5 @@
-/tg.py
 /.idea/
 /__pycache__/
 /venv/
 /nohup.out
+/tg/tg_token.py
