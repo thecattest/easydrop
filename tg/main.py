@@ -47,20 +47,51 @@ def default(update, context):
 
 
 def reg(update, context):
+    update.message.reply_text(REG, reply_markup=KB_EMPTY)
     db = db_session.create_session()
     tg_user, _ = get_user(update, db)
+
     user = User()
     user.id = tg_user.id
-    user.login = tg_user.username if tg_user.username else tg_user.id
     db.add(user)
     db.commit()
+
+    user_login = tg_user.username if tg_user.username else tg_user.id
+    if len(user_login) > 100 or \
+            not all([letter in ascii_lowercase for letter in user_login]) or \
+            db.query(User).filter(User.login == user_login).first():
+        update.message.reply_text(REG_LOGIN)
+        db.close()
+        return ST_REG_LOGIN
+    else:
+        user.login = user_login
+        db.commit()
+        db.close()
+        update.message.reply_text(REG_PASSWORD)
+        return ST_REG_PASSWORD
+
+
+def reg_login(update, context):
+    user_login = update.message.text
+    if len(user_login) > 100:
+        update.message.reply_text(TOO_LONG)
+        return ST_REG_LOGIN
+    if not all([letter in ascii_lowercase for letter in user_login]):
+        update.message.reply_text(WRONG_CHARACTERS)
+        return ST_REG_LOGIN
+    db = db_session.create_session()
+    tg_user, db_user = get_user(update, db)
+    if db.query(User).filter(User.login == user_login).first():
+        update.message.reply_text(LOGIN_TAKEN)
+        return ST_REG_LOGIN
+    db_user.login = user_login
+    db.commit()
     db.close()
-    update.message.reply_text(REG, reply_markup=KB_EMPTY)
     update.message.reply_text(REG_PASSWORD)
     return ST_REG_PASSWORD
 
 
-def password(update, context):
+def reg_password(update, context):
     user_password = update.message.text
     if not all([letter in ascii_lowercase for letter in user_password]):
         update.message.reply_text(WRONG_CHARACTERS)
@@ -93,7 +124,7 @@ def change_login(update, context):
     user_login = update.message.text
     tg_user, db_user = get_user(update, db)
     if len(user_login) > 100:
-        update.message.reply_text()
+        update.message.reply_text(TOO_LONG)
         return ST_CHANGE_LOGIN
     if not all([letter in ascii_lowercase for letter in user_login]):
         update.message.reply_text(WRONG_CHARACTERS)
@@ -164,8 +195,11 @@ conversation_handler = ConversationHandler(
         ST_REG: [
             MessageHandler(Filters.text(CMD_REG), reg)
         ],
+        ST_REG_LOGIN: [
+            MessageHandler(Filters.regex('.+'), reg_login)
+        ],
         ST_REG_PASSWORD: [
-            MessageHandler(Filters.regex('.+'), password)
+            MessageHandler(Filters.regex('.+'), reg_password)
         ],
         ST_MAIN: [
             MessageHandler(Filters.text(CMD_ACCOUNT), account)
