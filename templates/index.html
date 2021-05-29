@@ -3,6 +3,6 @@
 {% block content %}
 
     <form action="/upload" class="dropzone mx-auto"></form>
-    <a href="/logout" class="text-danger">logout</a>
+    <span>logged in as <b>@{{ login }}</b> <a href="/logout" class="text-danger">logout</a></span>
 
 {% endblock %}

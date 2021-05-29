@@ -27,6 +27,10 @@ body, html {
     box-shadow: none;
 }
 
+a {
+    text-decoration: underline;
+}
+
 /* .btn:focus, .btn-outline-dark:not(:disabled):not(.disabled):active:focus {
     outline: none;
     box-shadow: none;
