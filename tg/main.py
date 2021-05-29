@@ -55,15 +55,16 @@ def reg(update, context):
     db.add(user)
     db.commit()
     db.close()
-    update.message.reply_text(REG_START, reply_markup=KB_EMPTY)
-    return ST_PASSWORD
+    update.message.reply_text(REG, reply_markup=KB_EMPTY)
+    update.message.reply_text(REG_PASSWORD)
+    return ST_REG_PASSWORD
 
 
 def password(update, context):
     user_password = update.message.text
     if not all([letter in ascii_lowercase for letter in user_password]):
-        update.message.reply_text(ACCOUNT_LOGIN_CHANGE_WRONG_CHARACTERS)
-        return ST_PASSWORD
+        update.message.reply_text(WRONG_CHARACTERS)
+        return ST_REG_PASSWORD
     db = db_session.create_session()
     tg_user, db_user = get_user(update, db)
     db_user.set_password(user_password)
@@ -75,13 +76,16 @@ def password(update, context):
 
 
 def account(update, context):
-    update.message.reply_text(ACCOUNT, reply_markup=KB_ACCOUNT)
+    db = db_session.create_session()
+    _, db_user = get_user(update, db)
+    db.close()
+    update.message.reply_text(ACCOUNT_SETTINGS.format(db_user.login), reply_markup=KB_ACCOUNT)
     return ST_ACCOUNT
 
 
 def account_login(update, context):
-    update.message.reply_text(ACCOUNT_LOGIN_CHANGE, reply_markup=KB_EMPTY)
-    return ST_ACCOUNT_LOGIN
+    update.message.reply_text(NEW_LOGIN, reply_markup=KB_BACK)
+    return ST_CHANGE_LOGIN
 
 
 def change_login(update, context):
@@ -90,45 +94,45 @@ def change_login(update, context):
     tg_user, db_user = get_user(update, db)
     if len(user_login) > 100:
         update.message.reply_text()
-        return ST_ACCOUNT_LOGIN
+        return ST_CHANGE_LOGIN
     if not all([letter in ascii_lowercase for letter in user_login]):
-        update.message.reply_text(ACCOUNT_LOGIN_CHANGE_WRONG_CHARACTERS)
-        return ST_ACCOUNT_LOGIN
+        update.message.reply_text(WRONG_CHARACTERS)
+        return ST_CHANGE_LOGIN
     if db_user.login == user_login:
-        update.message.reply_text(ACCOUNT_LOGIN_CHANGE_LOGIN_SAME, reply_markup=KB_ACCOUNT)
+        update.message.reply_text(LOGIN_SAME, reply_markup=KB_ACCOUNT)
         return ST_ACCOUNT
     if db.query(User).filter(User.login == user_login).first():
-        update.message.reply_text(ACCOUNT_LOGIN_CHANGE_LOGIN_TAKEN)
-        return ST_ACCOUNT_LOGIN
+        update.message.reply_text(LOGIN_TAKEN)
+        return ST_CHANGE_LOGIN
     db_user.login = user_login
     db.commit()
     db.close()
-    update.message.reply_text(ACCOUNT_LOGIN_CHANGE_SUCCESS, reply_markup=KB_MAIN)
+    update.message.reply_text(LOGIN_CHANGE_SUCCESS, reply_markup=KB_MAIN)
     return ST_MAIN
 
 
 def account_password(update, context):
-    update.message.reply_text(ACCOUNT_PASSWORD_CHANGE, reply_markup=KB_EMPTY)
-    return ST_ACCOUNT_PASSWORD
+    update.message.reply_text(NEW_PASSWORD, reply_markup=KB_BACK)
+    return ST_CHANGE_PASSWORD
 
 
 def change_password(update, context):
     user_password = update.message.text
     if not all([letter in ascii_lowercase for letter in user_password]):
-        update.message.reply_text(ACCOUNT_LOGIN_CHANGE_WRONG_CHARACTERS)
-        return ST_ACCOUNT_PASSWORD
+        update.message.reply_text(WRONG_CHARACTERS)
+        return ST_CHANGE_PASSWORD
     db = db_session.create_session()
     tg_user, db_user = get_user(update, db)
     db_user.set_password(user_password)
     db.commit()
     db.close()
-    update.message.reply_text(ACCOUNT_PASSWORD_CHANGE_SUCCESS, reply_markup=KB_MAIN)
+    update.message.reply_text(PASSWORD_CHANGE_SUCCESS, reply_markup=KB_MAIN)
     return ST_MAIN
 
 
 def account_delete(update, context):
     update.message.reply_text(ACCOUNT_DELETE, reply_markup=KB_ACCOUNT_DELETE)
-    return ST_ACCOUNT_DELETE
+    return ST_DELETE_ACCOUNT
 
 
 def delete(update, context):
@@ -137,13 +141,17 @@ def delete(update, context):
     db.delete(db_user)
     db.commit()
     db.close()
-    update.message.reply_text("отныне я не знаю тебя...", reply_markup=KB_EMPTY)
+    update.message.reply_text("отныне я не знаю тебя...", reply_markup=KB_DEFAULT)
     return ConversationHandler.END
 
 
 def back(update, context):
     update.message.reply_text(CMD_BACK, reply_markup=KB_MAIN)
     return ST_MAIN
+
+
+def cancel(update, context):
+    return account(update, context)
 
 
 updater = Updater(TOKEN, use_context=True)
@@ -156,7 +164,7 @@ conversation_handler = ConversationHandler(
         ST_REG: [
             MessageHandler(Filters.text(CMD_REG), reg)
         ],
-        ST_PASSWORD: [
+        ST_REG_PASSWORD: [
             MessageHandler(Filters.regex('.+'), password)
         ],
         ST_MAIN: [
@@ -168,13 +176,15 @@ conversation_handler = ConversationHandler(
             MessageHandler(Filters.text(CMD_DELETE_ACCOUNT), account_delete),
             MessageHandler(Filters.text(CMD_BACK), back)
         ],
-        ST_ACCOUNT_LOGIN: [
+        ST_CHANGE_LOGIN: [
+            MessageHandler(Filters.text(CMD_CANCEL), cancel),
             MessageHandler(Filters.regex('.+'), change_login)
         ],
-        ST_ACCOUNT_PASSWORD: [
+        ST_CHANGE_PASSWORD: [
+            MessageHandler(Filters.text(CMD_CANCEL), cancel),
             MessageHandler(Filters.regex('.+'), change_password)
         ],
-        ST_ACCOUNT_DELETE: [
+        ST_DELETE_ACCOUNT: [
             MessageHandler(Filters.text(CMD_YES), delete),
             MessageHandler(Filters.text(CMD_NO), back),
         ]

@@ -7,9 +7,10 @@ CMD_CHANGE_PASSWORD = 'изменить пароль'
 CMD_DELETE_ACCOUNT = 'удалить аккаунт'
 CMD_YES = 'да'
 CMD_NO = 'нет'
-CMD_BACK = "назад"
+CMD_BACK = 'назад'
+CMD_CANCEL = 'отмена'
 
-ST_REG, ST_PASSWORD, \
+ST_REG, ST_REG_LOGIN, ST_REG_PASSWORD, \
     ST_MAIN, ST_ACCOUNT, \
-    ST_ACCOUNT_LOGIN, ST_ACCOUNT_PASSWORD,\
-    ST_ACCOUNT_DELETE = range(7)
+    ST_CHANGE_LOGIN, ST_CHANGE_PASSWORD, \
+    ST_DELETE_ACCOUNT = range(8)

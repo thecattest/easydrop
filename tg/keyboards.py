@@ -25,3 +25,13 @@ KB_ACCOUNT_DELETE = ReplyKeyboardMarkup(
     one_time_keyboard=False,
     resize_keyboard=True
 )
+KB_DEFAULT = ReplyKeyboardMarkup(
+    [[CMD_START]],
+    one_time_keyboard=False,
+    resize_keyboard=True
+)
+KB_BACK = ReplyKeyboardMarkup(
+    [[CMD_CANCEL]],
+    one_time_keyboard=False,
+    resize_keyboard=True
+)

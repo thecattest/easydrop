@@ -1,21 +1,28 @@
 HELLO = "привет"
-HELP = "заходишь на http://92.53.124.98:5003/ со своим логином и паролем" \
-       "\nбросаешь файлы в окошко и они прилетают тебе в этот чат" \
+HELP = "суть сервиса проста: зарегистрировавшись, " \
+       "ты получаешь возможность быстро перекидывать " \
+       "файлы с любого устройства себе посредством телеграма" \
+       "\n\nиспользовать просто:" \
+       "\nзаходишь на http://92.53.124.98:5003/" \
+       "\nбросаешь файл в окошко" \
+       "\nон прилетает тебе в этот чат" \
        "\n\nавтор - @thecattest" \
        "\nhttps://github.com/thecattest/easydrop"
 DEFAULT = "используй команды"
-REG_START = "отлично, регистрация\n\nпридумай пароль:"
-CREDENTIALS_LOGIN = "твой логин: {}"
-CREDENTIALS = CREDENTIALS_LOGIN + "\n" \
+REG = "отлично, регистрация"
+REG_LOGIN = "придумай логин:"
+REG_PASSWORD = "придумай пароль:"
+CREDENTIALS = "твой логин: {}\n" \
               "твой пароль: {}"
-REG_SUCCESS = "регистрация пройдена"
-ACCOUNT = "настройки аккаунта"
-ACCOUNT_LOGIN_CHANGE = "новый логин: "
-ACCOUNT_LOGIN_CHANGE_SUCCESS = "логин изменён"
-ACCOUNT_PASSWORD_CHANGE = "новый пароль: "
-ACCOUNT_PASSWORD_CHANGE_SUCCESS = "пароль изменён"
-ACCOUNT_LOGIN_CHANGE_LOGIN_TAKEN = "логин занят, придумай другой"
-ACCOUNT_LOGIN_CHANGE_WRONG_CHARACTERS = "используй только английские буквы"
-ACCOUNT_LOGIN_CHANGE_LOGIN_TOO_LONG = "не больше 100 символов, давай снова"
-ACCOUNT_LOGIN_CHANGE_LOGIN_SAME = "это и так твой логин"
+REG_SUCCESS = "регистрация пройдена, можно пользоваться сервисом"
+ACCOUNT_SETTINGS = "настройки аккаунта" \
+                   "\nтвой текущий логин: {}"
+NEW_LOGIN = "новый логин: "
+LOGIN_CHANGE_SUCCESS = "логин изменён"
+NEW_PASSWORD = "новый пароль: "
+PASSWORD_CHANGE_SUCCESS = "пароль изменён"
+LOGIN_TAKEN = "логин занят, придумай другой"
+WRONG_CHARACTERS = "используй только английские буквы"
+TOO_LONG = "не больше 100 символов, давай снова"
+LOGIN_SAME = "это и так твой логин"
 ACCOUNT_DELETE = "удалить аккаунт?"
