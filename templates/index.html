@@ -4,7 +4,7 @@
 
     <form action="/upload" class="dropzone mx-auto"></form>
     <span>logged in as <b>@{{ login }}</b> <a href="/logout" class="text-danger">logout</a></span>
-    <hr>
+    {% if files %} <hr> {% endif %}
     {% for file in files %}
     <span class="d-flex justify-content-between">
         <span>{{file.name}}</span>
