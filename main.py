@@ -67,7 +67,7 @@ def upload():
         try:
             bot.send_document(current_user.id, file, filename=file.filename)
         except NetworkError as e:
-            bot.send_message(CHAT_ID, str(e))
+            bot.send_message(current_user.id, str(e))
             path = 'files/' + file.filename
             if not os.path.exists("files"):
                 os.mkdir("files")
