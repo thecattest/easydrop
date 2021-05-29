@@ -4,3 +4,4 @@
 /nohup.out
 /data/db_config
 /tg/tg_config
+/tg/__pycache__/
