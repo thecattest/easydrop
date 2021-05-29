@@ -32,7 +32,11 @@ def login_handler():
         form_user = db.query(User).filter(User.login == form_login).first()
         db.close()
         if form_user:
-            if form_user.check_password(form_password):
+            if form_user.hashed_password == "":
+                return render_template("login.html",
+                                       alert_text="set password in bot",
+                                       login=form_login)
+            elif form_user.check_password(form_password):
                 login_user(form_user, True)
                 return redirect("/")
             else:

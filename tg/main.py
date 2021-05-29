@@ -53,6 +53,7 @@ def reg(update, context):
 
     user = User()
     user.id = tg_user.id
+    user.hashed_password = ""
     db.add(user)
     db.commit()
 
