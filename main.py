@@ -1,8 +1,9 @@
-from flask import Flask, request, make_response, jsonify, Response, render_template, redirect
+from flask import Flask, request, make_response, jsonify, Response, render_template, redirect, send_file
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from db_init import *
 import os
 from tg import updater, bot, NetworkError
+from io import BytesIO
 
 
 app = Flask(__name__)
@@ -84,6 +85,27 @@ def upload():
             with open(path, 'wb') as temp:
                 temp.write(file.read())
     return make_response(jsonify({"answer": "ok"}), 200)
+
+
+@app.route("/download/<file_id>")
+@login_required
+def download(file_id):
+    db = db_session.create_session()
+    db_file = db.query(File).filter(File.id == file_id).first()
+    if not db_file:
+        abort(404)
+    if not db_file.user_id == current_user.id:
+        abort(403)
+    db.close()
+    file = bot.get_file(db_file.id)
+    io = BytesIO()
+    file.download(out=io)
+    io.seek(0)
+    return send_file(
+        io,
+        as_attachment=True,
+        attachment_filename=db_file.name
+    )
 
 
 def main():

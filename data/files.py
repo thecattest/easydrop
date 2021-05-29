@@ -16,6 +16,11 @@ class File(SqlAlchemyBase):
     user_id = sqlalchemy.Column(sqlalchemy.String(100), sqlalchemy.ForeignKey("users.id"))
     user = orm.relation("User")
 
+    def get_name(self):
+        if len(self.name) >= 25:
+            return self.name[:25] + "..."
+        return self.name
+
     def get_date(self):
         return self.datetime.strftime("%d %b %H:%M")
 

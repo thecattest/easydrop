@@ -4,6 +4,8 @@ from telegram.ext import CommandHandler, ConversationHandler
 from telegram import Bot
 from telegram.error import NetworkError
 
+import sqlalchemy
+
 from string import ascii_lowercase
 
 from tg.commands import *
@@ -113,12 +115,16 @@ def doc(update, context):
     _, db_user = get_user(update, db)
     db_file = File()
     db_file.id = file.file_id
-    db_file.name = file.file_name.replace(" ", "_")
+    db_file.name = file.file_name
     db_file.user_id = db_user.id
     db.add(db_file)
-    db.commit()
-    db.close()
-    update.message.reply_text(FILE_SAVED)
+    try:
+        db.commit()
+        update.message.reply_text(FILE_SAVED)
+    except sqlalchemy.exc.DataError:
+        update.message.reply_text(FILE_NAME_ERROR)
+    finally:
+        db.close()
 
 
 def account(update, context):
@@ -204,7 +210,7 @@ updater = Updater(TOKEN, use_context=True)
 dp = updater.dispatcher
 
 conversation_handler = ConversationHandler(
-    entry_points=[MessageHandler(Filters.regex('.*'), start)],
+    entry_points=[MessageHandler(Filters.all, start)],
 
     states={
         ST_REG: [

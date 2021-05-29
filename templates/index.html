@@ -7,7 +7,7 @@
     {% if files %} <hr> {% endif %}
     {% for file in files %}
     <span class="d-flex justify-content-between">
-        <span>{{file.name}}</span>
+        <a href="/download/{{ file.id }}" title="{{file.name}}">{{file.get_name()}}</a>
         <span>{{file.get_date()}}</span>
     </span>
     {% endfor %}
