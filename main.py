@@ -60,7 +60,13 @@ def logout_handler():
 @login_required
 def index():
     # return send_html("index.html")
-    return render_template("index.html", login=current_user.login)
+    return render_template("index.html",
+                           login=current_user.login,
+                           files=sorted(
+                               current_user.files,
+                               key=lambda f: f.datetime,
+                               reverse=True)
+                           )
 
 
 @app.route("/upload", methods=["POST"])

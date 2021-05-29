@@ -107,6 +107,20 @@ def reg_password(update, context):
     return ST_MAIN
 
 
+def doc(update, context):
+    file = update.message.document
+    db = db_session.create_session()
+    _, db_user = get_user(update, db)
+    db_file = File()
+    db_file.id = file.file_id
+    db_file.name = file.file_name.replace(" ", "_")
+    db_file.user_id = db_user.id
+    db.add(db_file)
+    db.commit()
+    db.close()
+    update.message.reply_text(FILE_SAVED)
+
+
 def account(update, context):
     db = db_session.create_session()
     _, db_user = get_user(update, db)
@@ -203,7 +217,8 @@ conversation_handler = ConversationHandler(
             MessageHandler(Filters.regex('.+'), reg_password)
         ],
         ST_MAIN: [
-            MessageHandler(Filters.text(CMD_ACCOUNT), account)
+            MessageHandler(Filters.text(CMD_ACCOUNT), account),
+            MessageHandler(Filters.document, doc)
         ],
         ST_ACCOUNT: [
             MessageHandler(Filters.text(CMD_CHANGE_LOGIN), account_login),
