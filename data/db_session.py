@@ -26,7 +26,7 @@ def global_init(db_file, type, username=None, password=None):
     else:
         raise ValueError("Specify correct database type")
 
-    engine = sa.create_engine(conn_str, echo=False)
+    engine = sa.create_engine(conn_str, echo=False, pool_pre_ping=True)
     __factory = orm.sessionmaker(bind=engine)
 
     from data import __all_models
