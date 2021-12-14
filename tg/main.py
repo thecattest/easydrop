@@ -6,7 +6,7 @@ from telegram.error import NetworkError, BadRequest
 
 import sqlalchemy
 
-from string import ascii_lowercase
+from string import ascii_letters, digits
 
 from tg.commands import *
 from tg.strings import *
@@ -61,7 +61,7 @@ def reg(update, context):
 
     user_login = tg_user.username if tg_user.username else tg_user.id
     if len(user_login) > 100 or \
-            not all([letter in ascii_lowercase for letter in user_login]) or \
+            not all([letter in ascii_letters + digits + "_-." for letter in user_login]) or \
             db.query(User).filter(User.login == user_login).first():
         update.message.reply_text(REG_LOGIN)
         db.close()
@@ -79,7 +79,7 @@ def reg_login(update, context):
     if len(user_login) > 100:
         update.message.reply_text(TOO_LONG)
         return ST_REG_LOGIN
-    if not all([letter in ascii_lowercase for letter in user_login]):
+    if not all([letter in ascii_letters + digits + "_-." for letter in user_login]):
         update.message.reply_text(WRONG_CHARACTERS)
         return ST_REG_LOGIN
     db = db_session.create_session()
@@ -96,7 +96,7 @@ def reg_login(update, context):
 
 def reg_password(update, context):
     user_password = update.message.text
-    if not all([letter in ascii_lowercase for letter in user_password]):
+    if not all([letter in ascii_letters + digits + "_-." for letter in user_password]):
         update.message.reply_text(WRONG_CHARACTERS)
         return ST_REG_PASSWORD
     db = db_session.create_session()
@@ -124,7 +124,7 @@ def doc(update, context):
     for i in range(len(file.file_name)):
         letter = file.file_name[i]
         translated = letter
-        if not letter.isdigit() and letter not in ok_characters and letter.lower() not in ascii_lowercase:
+        if not letter.isdigit() and letter not in ok_characters and letter not in ascii_letters:
             if letter.lower() in letters:
                 translated = letters[letter.lower()]
                 if letter.isupper():
@@ -163,7 +163,7 @@ def change_login(update, context):
     if len(user_login) > 100:
         update.message.reply_text(TOO_LONG)
         return ST_CHANGE_LOGIN
-    if not all([letter in ascii_lowercase for letter in user_login]):
+    if not all([letter in ascii_letters + digits + "_-." for letter in user_login]):
         update.message.reply_text(WRONG_CHARACTERS)
         return ST_CHANGE_LOGIN
     if db_user.login == user_login:
@@ -186,7 +186,7 @@ def account_password(update, context):
 
 def change_password(update, context):
     user_password = update.message.text
-    if not all([letter in ascii_lowercase for letter in user_password]):
+    if not all([letter in ascii_letters + digits + "_-." for letter in user_password]):
         update.message.reply_text(WRONG_CHARACTERS)
         return ST_CHANGE_PASSWORD
     db = db_session.create_session()
