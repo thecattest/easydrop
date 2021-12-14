@@ -2,7 +2,7 @@ import telegram
 from telegram.ext import Updater, MessageHandler, Filters
 from telegram.ext import CommandHandler, ConversationHandler
 from telegram import Bot
-from telegram.error import NetworkError
+from telegram.error import NetworkError, BadRequest
 
 import sqlalchemy
 

@@ -2,7 +2,7 @@ from flask import Flask, request, make_response, jsonify, Response, render_templ
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from db_init import *
 import os
-from tg import updater, bot, NetworkError
+from tg import updater, bot, NetworkError, BadRequest
 from io import BytesIO
 
 
@@ -97,7 +97,10 @@ def download(file_id):
     if not db_file.user_id == current_user.id:
         abort(403)
     db.close()
-    file = bot.get_file(db_file.id)
+    try:
+        file = bot.get_file(db_file.id)
+    except BadRequest as e:
+        return f"<h2>Error: {str(e)} <a href='/'>back</a></h2>"
     io = BytesIO()
     file.download(out=io)
     io.seek(0)
