@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    {% if alert_text %}
+      <small class="text-danger">{{ alert_text }}</small>
+    {% endif %}
+    <form class="mt-2" action="/login" method="post">
+        <div class="form-group mb-3">
+            <input class="form-control form-control-sm"
+                   name="login" type="text"
+                   placeholder="login" value="{{ login }}" autofocus>
+        </div>
+        <div class="form-group mb-3">
+            <input class="form-control form-control-sm"
+                   name="password" type="password"
+                   placeholder="password">
+        </div>
+        <div class="form-group buttons w-100 text-right">
+            <button type="submit" class="btn btn-sm btn-outline-dark">submit</button>
+        </div>
+    </form>
+
+{% endblock %}

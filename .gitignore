@@ -1,5 +1,8 @@
-/tg.py
 /.idea/
 /__pycache__/
 /venv/
 /nohup.out
+/data/db_config
+/tg/tg_config
+/tg/__pycache__/
+/data/__pycache__/
