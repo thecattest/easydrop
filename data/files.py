@@ -10,7 +10,7 @@ class File(SqlAlchemyBase):
     __tablename__ = 'files'
 
     id = sqlalchemy.Column(sqlalchemy.String(100), primary_key=True, unique=True)
-    name = sqlalchemy.Column(sqlalchemy.String(200), unique=False, nullable=True)
+    name = sqlalchemy.Column(sqlalchemy.VARCHAR(200), unique=False, nullable=True)
     datetime = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.now)
 
     user_id = sqlalchemy.Column(sqlalchemy.String(100), sqlalchemy.ForeignKey("users.id"))

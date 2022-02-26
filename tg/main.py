@@ -115,23 +115,7 @@ def doc(update, context):
     _, db_user = get_user(update, db)
     db_file = File()
     db_file.id = file.file_id
-    db_file.name = ""
-    letters = {'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e', 'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'i',
-     'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f',
-     'х': 'kh', 'ц': 'tc', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ы': 'y', 'э': 'e', 'ю': 'iu', 'я': 'ia', 'ъ': '',
-     'ь': ''}
-    ok_characters = "_- .,"
-    for i in range(len(file.file_name)):
-        letter = file.file_name[i]
-        translated = letter
-        if not letter.isdigit() and letter not in ok_characters and letter not in ascii_letters:
-            if letter.lower() in letters:
-                translated = letters[letter.lower()]
-                if letter.isupper():
-                    translated = translated.upper()
-            else:
-                translated = ""
-        db_file.name += translated
+    db_file.name = file.file_name
     db_file.user_id = db_user.id
     db.add(db_file)
     try:
