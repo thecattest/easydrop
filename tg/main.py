@@ -62,29 +62,33 @@ def reg(update, context):
     db.add(user)
     db.commit()
 
-    user_login = tg_user.username if tg_user.username else tg_user.id
-    if len(user_login) > 100 or \
-            not all([letter in ascii_letters + digits + "_-." for letter in user_login]) or \
-            db.query(User).filter(User.login == user_login).first():
-        update.message.reply_text(REG_LOGIN)
-        db.close()
-        return ST_REG_LOGIN
-    else:
+    if tg_user.username:
+    # if len(user_login) > 100 or \
+            # not all([letter in ascii_letters + digits + "_-." for letter in user_login]) or \
+            # db.query(User).filter(User.login == user_login).first():
+        # update.message.reply_text(REG_LOGIN)
+        # db.close()
+        # return ST_REG_LOGIN
+    # else:
         user.login = user_login
         db.commit()
         db.close()
         update.message.reply_text(REG_PASSWORD)
         return ST_REG_PASSWORD
+    else:
+        db.close()
+        update.message.reply_text(REG_LOGIN)
+        return ST_REG_LOGIN
 
 
 def reg_login(update, context):
     user_login = update.message.text
-    if len(user_login) > 100:
-        update.message.reply_text(TOO_LONG)
-        return ST_REG_LOGIN
-    if not all([letter in ascii_letters + digits + "_-." for letter in user_login]):
-        update.message.reply_text(WRONG_CHARACTERS)
-        return ST_REG_LOGIN
+    # if len(user_login) > 100:
+        # update.message.reply_text(TOO_LONG)
+        # return ST_REG_LOGIN
+    # if not all([letter in ascii_letters + digits + "_-." for letter in user_login]):
+        # update.message.reply_text(WRONG_CHARACTERS)
+        # return ST_REG_LOGIN
     db = db_session.create_session()
     tg_user, db_user = get_user(update, db)
     if db.query(User).filter(User.login == user_login).first():
@@ -227,18 +231,18 @@ def change_login(update, context):
     db = db_session.create_session()
     user_login = update.message.text
     tg_user, db_user = get_user(update, db)
-    if len(user_login) > 100:
-        update.message.reply_text(TOO_LONG)
-        return ST_CHANGE_LOGIN
-    if not all([letter in ascii_letters + digits + "_-." for letter in user_login]):
-        update.message.reply_text(WRONG_CHARACTERS)
-        return ST_CHANGE_LOGIN
-    if db_user.login == user_login:
-        update.message.reply_text(LOGIN_SAME, reply_markup=KB_ACCOUNT)
-        return ST_ACCOUNT
-    if db.query(User).filter(User.login == user_login).first():
-        update.message.reply_text(LOGIN_TAKEN)
-        return ST_CHANGE_LOGIN
+    # if len(user_login) > 100:
+        # update.message.reply_text(TOO_LONG)
+        # return ST_CHANGE_LOGIN
+    # if not all([letter in ascii_letters + digits + "_-." for letter in user_login]):
+        # update.message.reply_text(WRONG_CHARACTERS)
+        # return ST_CHANGE_LOGIN
+    # if db_user.login == user_login:
+        # update.message.reply_text(LOGIN_SAME, reply_markup=KB_ACCOUNT)
+        # return ST_ACCOUNT
+    # if db.query(User).filter(User.login == user_login).first():
+        # update.message.reply_text(LOGIN_TAKEN)
+        # return ST_CHANGE_LOGIN
     db_user.login = user_login
     db.commit()
     db.close()
@@ -253,9 +257,9 @@ def account_password(update, context):
 
 def change_password(update, context):
     user_password = update.message.text
-    if not all([letter in ascii_letters + digits + "_-." for letter in user_password]):
-        update.message.reply_text(WRONG_CHARACTERS)
-        return ST_CHANGE_PASSWORD
+    # if not all([letter in ascii_letters + digits + "_-." for letter in user_password]):
+        # update.message.reply_text(WRONG_CHARACTERS)
+        # return ST_CHANGE_PASSWORD
     db = db_session.create_session()
     tg_user, db_user = get_user(update, db)
     db_user.set_password(user_password)
