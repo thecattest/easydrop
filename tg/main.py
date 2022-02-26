@@ -1,7 +1,7 @@
 import telegram
 from telegram.ext import Updater, MessageHandler, Filters
-from telegram.ext import CommandHandler, ConversationHandler
-from telegram import Bot
+from telegram.ext import CommandHandler, ConversationHandler, CallbackQueryHandler
+from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.error import NetworkError, BadRequest
 
 import sqlalchemy
@@ -22,7 +22,10 @@ except FileNotFoundError:
 
 
 def get_user(update, db):
-    tg_user = update.message.from_user
+    try:
+        tg_user = update.message.from_user
+    except AttributeError:
+        tg_user = update.callback_query.from_user
     db_user = db.query(User).filter(User.id == tg_user.id).first()
     return tg_user, db_user
 
@@ -96,9 +99,9 @@ def reg_login(update, context):
 
 def reg_password(update, context):
     user_password = update.message.text
-    if not all([letter in ascii_letters + digits + "_-." for letter in user_password]):
-        update.message.reply_text(WRONG_CHARACTERS)
-        return ST_REG_PASSWORD
+    # if not all([letter in ascii_letters + digits + "_-." for letter in user_password]):
+    #     update.message.reply_text(WRONG_CHARACTERS)
+    #     return ST_REG_PASSWORD
     db = db_session.create_session()
     tg_user, db_user = get_user(update, db)
     db_user.set_password(user_password)
@@ -121,10 +124,90 @@ def doc(update, context):
     try:
         db.commit()
         update.message.reply_text(FILE_SAVED)
-    except sqlalchemy.exc.DataError:
+    except sqlalchemy.exc.DataError as err:
         update.message.reply_text(FILE_NAME_ERROR)
     finally:
         db.close()
+
+
+def files(update, context, edited=False):
+    db = db_session.create_session()
+    tg_user, db_user = get_user(update, db)
+    files = [(f.name, f.iid) for f in db_user.files]
+    reply_markup = InlineKeyboardMarkup(
+        [[InlineKeyboardButton(name, callback_data=SHOW + "." + str(iid))]
+            for name, iid in files])
+    text = FILES_LIST if files else NO_FILES
+    if edited:
+        files_message_id = context.user_data[FILES_MESSAGE_ID]
+        bot.edit_message_text(text, tg_user.id, files_message_id, reply_markup=reply_markup)
+    else:
+        message = update.message.reply_text(text, reply_markup=reply_markup)
+        context.user_data[FILES_MESSAGE_ID] = message.message_id
+    db.close()
+
+
+def file_edit(update, context):
+    btn_type, file_id = update.callback_query.data.split(".")
+    files_message_id = context.user_data[FILES_MESSAGE_ID]
+    db = db_session.create_session()
+    tg_user, db_user = get_user(update, db)
+
+    if btn_type == SHOW:
+        file = db.query(File).filter(File.iid == int(file_id)).first()
+        reply_markup = InlineKeyboardMarkup(
+            [[InlineKeyboardButton(text=RENAME_TEXT, callback_data=RENAME + "." + file_id),
+            InlineKeyboardButton(text=DELETE_TEXT, callback_data=DELETE + "." + file_id)]]
+        )
+        bot.edit_message_text(file.name, tg_user.id, files_message_id, reply_markup=reply_markup)
+    elif btn_type == RENAME:
+        context.user_data[RENAME] = file_id
+        cancel_markup = InlineKeyboardMarkup(
+            [[InlineKeyboardButton(
+                text=CMD_CANCEL, callback_data=CMD_CANCEL)
+            ]]
+        )
+        bot.edit_message_text(FILE_RENAME, tg_user.id, files_message_id, reply_markup=cancel_markup)
+        db.close()
+        return ST_FILE_RENAME
+    elif btn_type == DELETE:
+        file = db.query(File).filter(File.iid == int(file_id)).first()
+        confirmation_markup = InlineKeyboardMarkup([[
+            InlineKeyboardButton(text=CMD_YES, callback_data=CMD_YES + "." + file_id),
+            InlineKeyboardButton(text=CMD_NO, callback_data=CMD_NO + "." + file_id)
+        ]])
+        bot.edit_message_text(
+            DELETE_CONFIRMATION.format(file.name),
+            tg_user.id, files_message_id,
+            reply_markup=confirmation_markup)
+    elif btn_type == CMD_YES:
+        file = db.query(File).filter(File.iid == int(file_id)).first()
+        db.delete(file)
+        db.commit()
+        files(update, context, True)
+    elif btn_type == CMD_NO:
+        files(update, context, True)
+    db.close()
+
+
+def file_rename(update, context):
+    iid = context.user_data[RENAME]
+    db = db_session.create_session()
+    tg_user, db_user = get_user(update, db)
+
+    file = db.query(File).filter(File.iid == iid).first()
+    new_file_name = update.message.text.replace(".", "-") + "." + file.name.split(".")[-1]
+    file.name = new_file_name
+    db.commit()
+    db.close()
+
+    files(update, context, True)
+    return ST_MAIN
+
+
+def file_rename_cancel(update, context):
+    files(update, context, True)
+    return ST_MAIN
 
 
 def account(update, context):
@@ -224,7 +307,13 @@ conversation_handler = ConversationHandler(
         ],
         ST_MAIN: [
             MessageHandler(Filters.text(CMD_ACCOUNT), account),
-            MessageHandler(Filters.document, doc)
+            MessageHandler(Filters.text(CMD_FILES), files),
+            MessageHandler(Filters.document, doc),
+            CallbackQueryHandler(file_edit)
+        ],
+        ST_FILE_RENAME: [
+            MessageHandler(Filters.regex(".+"), file_rename),
+            CallbackQueryHandler(file_rename_cancel)
         ],
         ST_ACCOUNT: [
             MessageHandler(Filters.text(CMD_CHANGE_LOGIN), account_login),

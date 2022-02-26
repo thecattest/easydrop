@@ -9,7 +9,7 @@ KB_START = ReplyKeyboardMarkup(
 )
 KB_EMPTY = ReplyKeyboardRemove()
 KB_MAIN = ReplyKeyboardMarkup(
-    [[CMD_ACCOUNT, CMD_HELP]],
+    [[CMD_ACCOUNT, CMD_FILES, CMD_HELP]],
     one_time_keyboard=False,
     resize_keyboard=True
 )

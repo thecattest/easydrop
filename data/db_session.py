@@ -22,7 +22,7 @@ def global_init(db_file, type, username=None, password=None):
     if type == SQLITE:
         conn_str = f'sqlite:///{db_file.strip()}?check_same_thread=False'
     elif type == MYSQL:
-        conn_str = f'mysql+pymysql://{username}:{password}@92.53.124.98/{db_file}?charset=utf8'
+        conn_str = f'mysql+pymysql://{username}:{password}@92.53.124.98/{db_file}?charset=utf8mb4'
     else:
         raise ValueError("Specify correct database type")
 
