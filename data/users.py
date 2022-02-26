@@ -11,7 +11,7 @@ class User(SqlAlchemyBase, UserMixin):
     __tablename__ = 'users'
 
     id = sqlalchemy.Column(sqlalchemy.String(100), primary_key=True, unique=True)
-    login = sqlalchemy.Column(sqlalchemy.String(100), unique=True)
+    login = sqlalchemy.Column(sqlalchemy.VARCHAR(255), unique=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String(110), nullable=True)
 
     files = orm.relation("File", back_populates="user")

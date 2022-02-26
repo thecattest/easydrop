@@ -70,7 +70,7 @@ def reg(update, context):
         # db.close()
         # return ST_REG_LOGIN
     # else:
-        user.login = user_login
+        user.login = tg_user.username[:255]
         db.commit()
         db.close()
         update.message.reply_text(REG_PASSWORD)
@@ -82,7 +82,7 @@ def reg(update, context):
 
 
 def reg_login(update, context):
-    user_login = update.message.text
+    user_login = update.message.text[:255]
     # if len(user_login) > 100:
         # update.message.reply_text(TOO_LONG)
         # return ST_REG_LOGIN
@@ -229,7 +229,7 @@ def account_login(update, context):
 
 def change_login(update, context):
     db = db_session.create_session()
-    user_login = update.message.text
+    user_login = update.message.text[:255]
     tg_user, db_user = get_user(update, db)
     # if len(user_login) > 100:
         # update.message.reply_text(TOO_LONG)
@@ -240,9 +240,9 @@ def change_login(update, context):
     # if db_user.login == user_login:
         # update.message.reply_text(LOGIN_SAME, reply_markup=KB_ACCOUNT)
         # return ST_ACCOUNT
-    # if db.query(User).filter(User.login == user_login).first():
-        # update.message.reply_text(LOGIN_TAKEN)
-        # return ST_CHANGE_LOGIN
+    if db.query(User).filter(User.login == user_login).first():
+        update.message.reply_text(LOGIN_TAKEN)
+        return ST_CHANGE_LOGIN
     db_user.login = user_login
     db.commit()
     db.close()
