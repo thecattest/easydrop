@@ -1,0 +1,12 @@
+[Unit]
+Description=easydrop bot
+
+[Service]
+Type=simple
+User=ilya
+WorkingDirectory=/home/ilya/easydrop
+ExecStart=/home/ilya/easydrop/venv/bin/python main.py 
+Restart=always
+
+[Install]
+WantedBy=easydrop.target
